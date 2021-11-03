@@ -21,10 +21,10 @@ int deadband(int raw) {
   if (abs(raw - midVal) < width) {
     return 0;
   } else {
-    if (raw < mid) {
-      return (mid / (mid - width)) * raw;
+    if (raw < midVal) {
+      return (midVal / (midVal - width)) * raw;
     } else {
-      return (mid / (mid + width)) * raw;
+      return (midVal / (midVal + width)) * raw;
     }
   }
 }
