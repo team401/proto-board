@@ -3,7 +3,6 @@
 const int n = 4;
 const int minVal = 1500;
 const int maxVal = 2000;
-const int midVal = minVal + (maxVal - minVal) / 2;
 const int width = 25;
 
 int pots[] = {A0, A1, A2, A3};
@@ -17,14 +16,18 @@ void setup() {
   }
 }
 
-int deadband(int raw) {
-  if (abs(raw - midVal) < width) {
-    return 0;
+int deadband(int rawVal) {
+  const float midVal = minVal + (maxVal - minVal) / 2;
+  const float deltaX = midVal - minVal - width;
+  const float deltaY = midVal - minVal;
+
+  if (abs(rawVal - midVal) < width) {
+    return midVal;
   } else {
-    if (raw < midVal) {
-      return (midVal / (midVal - width)) * raw;
+    if (rawVal < midVal) {
+      return int((deltaY / deltaX) * (rawVal - minVal) + minVal);
     } else {
-      return (midVal / (midVal + width)) * raw;
+      return int((deltaY / deltaX) * (rawVal - midVal - width) + minVal);
     }
   }
 }
