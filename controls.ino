@@ -1,9 +1,14 @@
 #include <Servo.h>
 
 const int n = 4;
-const int minVal = 1500;
+const int minVal = 1000;
 const int maxVal = 2000;
+const int midVal = (maxVal + minVal) / 2;
+
+const int inputMid = 512;
 const int width = 25;
+
+const int slope = (midVal - minVal) / (inputMid - width);
 
 int pots[] = {A0, A1, A2, A3};
 int pwms[] = {3, 5, 6, 9};
@@ -17,23 +22,17 @@ void setup() {
 }
 
 int deadband(int rawVal) {
-  const float midVal = minVal + (maxVal - minVal) / 2;
-  const float deltaX = midVal - minVal - width;
-  const float deltaY = midVal - minVal;
-
-  if (abs(rawVal - midVal) < width) {
+  if (abs(rawVal - inputMid) < width) {
     return midVal;
+  } else if (rawVal < inputMid) {
+    return minVal + slope * rawVal;
   } else {
-    if (rawVal < midVal) {
-      return int((deltaY / deltaX) * (rawVal - minVal) + minVal);
-    } else {
-      return int((deltaY / deltaX) * (rawVal - midVal - width) + minVal);
-    }
+    return minVal + slope * (rawVal - (width * 2));
   }
 }
 
 void loop() {
   for (int i = 0; i < n; i++) {
-    outputs[i].writeMicroseconds(deadband(minVal + analogRead(pots[i]) / 2));
+    outputs[i].writeMicroseconds(deadband(analogRead(pots[i])));
   }
 }
